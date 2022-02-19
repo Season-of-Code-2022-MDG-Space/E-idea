@@ -1,4 +1,5 @@
 import 'package:assignment/main.dart';
+import 'package:assignment/screens/homepage.dart';
 import 'package:assignment/screens/signupscreen.dart';
 import 'package:flutter/material.dart';
 
@@ -25,6 +26,7 @@ class _loginscreenState extends State<loginscreen> {
         emailController.text = value!;
       },
       textInputAction: TextInputAction.next,
+      decoration: InputDecoration(hintText: "Email ID"),
     );
 
     final passwordfield = TextFormField(
@@ -34,16 +36,24 @@ class _loginscreenState extends State<loginscreen> {
         passwordController.text = value!;
       },
       textInputAction: TextInputAction.done,
+      decoration: InputDecoration(hintText: "Password"),
     );
 
     final loginbutton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
       child: MaterialButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => homepage(),
+              ));
+        },
         child: Text('Login'),
       ),
     );
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
