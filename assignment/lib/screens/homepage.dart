@@ -1,3 +1,6 @@
+import 'package:assignment/model/usermodel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class homepage extends StatefulWidget {
@@ -8,7 +11,22 @@ class homepage extends StatefulWidget {
 }
 
 class _homepageState extends State<homepage> {
+  User? user = FirebaseAuth.instance.currentUser;
+  usermodel loggedinuser = usermodel();
+
   @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      this.loggedinuser = usermodel.fromMap(value.data());
+      setState(() {});
+    });
+  }
+
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
@@ -18,8 +36,18 @@ class _homepageState extends State<homepage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("Hi"),
-              Text("Name"),
+              const Text(
+                "Hi",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              Text("${loggedinuser.name}",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold)),
               ElevatedButton(onPressed: () {}, child: Text("Assignments"))
             ],
           ),

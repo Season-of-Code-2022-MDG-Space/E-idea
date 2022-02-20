@@ -1,7 +1,11 @@
 import 'dart:ui';
 
+import 'package:assignment/model/usermodel.dart';
 import 'package:assignment/screens/homepage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class signupscreen extends StatefulWidget {
   const signupscreen({Key? key}) : super(key: key);
@@ -11,6 +15,7 @@ class signupscreen extends StatefulWidget {
 }
 
 class _signupscreenState extends State<signupscreen> {
+  final _auth = FirebaseAuth.instance;
   @override
   final _formKey = GlobalKey<FormState>();
 
@@ -19,6 +24,8 @@ class _signupscreenState extends State<signupscreen> {
 
   String value = "CSE";
   String value2 = "O1";
+  final branchEditingController = new TextEditingController();
+  final batchEditingController = new TextEditingController();
 
   final emailidEditingController = new TextEditingController();
   final passwordEditingController = new TextEditingController();
@@ -29,6 +36,16 @@ class _signupscreenState extends State<signupscreen> {
       autofocus: false,
       controller: nameEditingController,
       keyboardType: TextInputType.name,
+      validator: (value) {
+        RegExp regex = new RegExp(r'^.{3,}$');
+        if (value!.isEmpty) {
+          return ("Name cannot be empty");
+        }
+        if (!regex.hasMatch(value)) {
+          return ("Enter Valid Name(Min. 3 Characters)");
+        }
+        return null;
+      },
       onSaved: (value) {
         nameEditingController.text = value!;
       },
@@ -51,6 +68,16 @@ class _signupscreenState extends State<signupscreen> {
       autofocus: false,
       controller: emailidEditingController,
       keyboardType: TextInputType.emailAddress,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("Please enter your email");
+        }
+
+        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)) {
+          return ("Please Enter a valid email");
+        }
+        return null;
+      },
       onSaved: (value) {
         emailidEditingController.text = value!;
       },
@@ -62,6 +89,15 @@ class _signupscreenState extends State<signupscreen> {
       autofocus: false,
       controller: passwordEditingController,
       obscureText: true,
+      validator: (value) {
+        RegExp regex = new RegExp(r'^.{6,}$');
+        if (value!.isEmpty) {
+          return ("Password is required for login");
+        }
+        if (!regex.hasMatch(value)) {
+          return ("Enter Valid Password(Min. 6 Character)");
+        }
+      },
       onSaved: (value) {
         passwordEditingController.text = value!;
       },
@@ -73,6 +109,12 @@ class _signupscreenState extends State<signupscreen> {
       autofocus: false,
       controller: cpasswordEditingController,
       obscureText: true,
+      validator: (value) {
+        if (cpasswordEditingController.text != passwordEditingController.text) {
+          return "Password don't match";
+        }
+        return null;
+      },
       onSaved: (value) {
         cpasswordEditingController.text = value!;
       },
@@ -85,11 +127,7 @@ class _signupscreenState extends State<signupscreen> {
       borderRadius: BorderRadius.circular(30),
       child: MaterialButton(
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => homepage(),
-              ));
+          signup(emailidEditingController.text, passwordEditingController.text);
         },
         child: Text('Sign Up'),
       ),
@@ -132,6 +170,7 @@ class _signupscreenState extends State<signupscreen> {
                         setState(() {
                           value = newValue!;
                         });
+                        branchEditingController.text = newValue!;
                       },
                       hint: Text("Branch"),
                     ),
@@ -151,6 +190,7 @@ class _signupscreenState extends State<signupscreen> {
                         setState(() {
                           value2 = newValue2!;
                         });
+                        batchEditingController.text = newValue2!;
                       },
                       hint: Text("Batch"),
                     ),
@@ -166,5 +206,43 @@ class _signupscreenState extends State<signupscreen> {
         ),
       ),
     );
+  }
+
+  //signup function
+  void signup(String email, String password) async {
+    if (_formKey.currentState!.validate()) {
+      await _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) => {
+                postdetailstoFirestore(),
+              })
+          .catchError((e) {
+        Fluttertoast.showToast(msg: e!.message);
+      });
+    }
+  }
+
+  postdetailstoFirestore() async {
+    //call firestore
+    //call usermodel
+    //sending values
+
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+    usermodel userModel = usermodel();
+    userModel.email = user!.email;
+    userModel.uid = user.uid;
+    userModel.name = nameEditingController.text;
+    userModel.enrollment = enrollmentEditingController.text;
+    userModel.branch = branchEditingController.text;
+    userModel.batch = batchEditingController.text;
+
+    await firebaseFirestore
+        .collection("users")
+        .doc(user.uid)
+        .set(userModel.toMap());
+    Fluttertoast.showToast(msg: "Account created successfully");
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (context) => homepage()), (route) => false);
   }
 }
