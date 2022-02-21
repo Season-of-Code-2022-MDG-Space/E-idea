@@ -2,6 +2,7 @@ import 'package:assignment/model/usermodel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:assignment/assignments_screens/subscreen.dart';
 
 class homepage extends StatefulWidget {
   const homepage({Key? key}) : super(key: key);
@@ -48,7 +49,14 @@ class _homepageState extends State<homepage> {
                       color: Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.bold)),
-              ElevatedButton(onPressed: () {}, child: Text("Assignments"))
+              ElevatedButton(
+                  onPressed: () {
+                    var push = Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyApp3()),
+                    );
+                  },
+                  child: Text("Assignments"))
             ],
           ),
         ),
