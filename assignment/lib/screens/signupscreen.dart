@@ -1,12 +1,13 @@
-import 'dart:ui';
-
 import 'package:assignment/model/usermodel.dart';
 import 'package:assignment/screens/homepage.dart';
+import 'package:assignment/states/CurrentUser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
+// ignore: camel_case_types
 class signupscreen extends StatefulWidget {
   const signupscreen({Key? key}) : super(key: key);
 
@@ -14,22 +15,22 @@ class signupscreen extends StatefulWidget {
   _signupscreenState createState() => _signupscreenState();
 }
 
+// ignore: camel_case_types
 class _signupscreenState extends State<signupscreen> {
-  final _auth = FirebaseAuth.instance;
-  @override
+  //@override
   final _formKey = GlobalKey<FormState>();
 
-  final nameEditingController = new TextEditingController();
-  final enrollmentEditingController = new TextEditingController();
+  final nameEditingController = TextEditingController();
+  final enrollmentEditingController = TextEditingController();
 
-  String value = "CSE";
-  String value2 = "O1";
-  final branchEditingController = new TextEditingController();
-  final batchEditingController = new TextEditingController();
+  String value = "Branch";
+  String value2 = "Batch";
+  final branchEditingController = TextEditingController();
+  final batchEditingController = TextEditingController();
 
-  final emailidEditingController = new TextEditingController();
-  final passwordEditingController = new TextEditingController();
-  final cpasswordEditingController = new TextEditingController();
+  final emailidEditingController = TextEditingController();
+  final passwordEditingController = TextEditingController();
+  final cpasswordEditingController = TextEditingController();
 
   Widget build(BuildContext context) {
     final namefield = TextFormField(
@@ -37,7 +38,7 @@ class _signupscreenState extends State<signupscreen> {
       controller: nameEditingController,
       keyboardType: TextInputType.name,
       validator: (value) {
-        RegExp regex = new RegExp(r'^.{3,}$');
+        RegExp regex = RegExp(r'^.{3,}$');
         if (value!.isEmpty) {
           return ("Name cannot be empty");
         }
@@ -50,7 +51,7 @@ class _signupscreenState extends State<signupscreen> {
         nameEditingController.text = value!;
       },
       textInputAction: TextInputAction.next,
-      decoration: InputDecoration(hintText: "Full Name"),
+      decoration: const InputDecoration(hintText: "Full Name"),
     );
 
     final enrollmentfield = TextFormField(
@@ -61,7 +62,7 @@ class _signupscreenState extends State<signupscreen> {
         enrollmentEditingController.text = value!;
       },
       textInputAction: TextInputAction.next,
-      decoration: InputDecoration(hintText: "Enrollment No."),
+      decoration: const InputDecoration(hintText: "Enrollment No."),
     );
 
     final emailidfield = TextFormField(
@@ -79,10 +80,10 @@ class _signupscreenState extends State<signupscreen> {
         return null;
       },
       onSaved: (value) {
-        emailidEditingController.text = value!;
+        emailidEditingController.text = value!.trim();
       },
       textInputAction: TextInputAction.next,
-      decoration: InputDecoration(hintText: "Email ID"),
+      decoration: const InputDecoration(hintText: "Email ID"),
     );
 
     final passwordfield = TextFormField(
@@ -90,7 +91,7 @@ class _signupscreenState extends State<signupscreen> {
       controller: passwordEditingController,
       obscureText: true,
       validator: (value) {
-        RegExp regex = new RegExp(r'^.{6,}$');
+        RegExp regex = RegExp(r'^.{6,}$');
         if (value!.isEmpty) {
           return ("Password is required for login");
         }
@@ -102,7 +103,7 @@ class _signupscreenState extends State<signupscreen> {
         passwordEditingController.text = value!;
       },
       textInputAction: TextInputAction.next,
-      decoration: InputDecoration(hintText: "Password"),
+      decoration: const InputDecoration(hintText: "Password"),
     );
 
     final cpasswordfield = TextFormField(
@@ -119,7 +120,7 @@ class _signupscreenState extends State<signupscreen> {
         cpasswordEditingController.text = value!;
       },
       textInputAction: TextInputAction.done,
-      decoration: InputDecoration(hintText: "Confirm Password"),
+      decoration: const InputDecoration(hintText: "Confirm Password"),
     );
 
     final signupbutton = Material(
@@ -127,9 +128,21 @@ class _signupscreenState extends State<signupscreen> {
       borderRadius: BorderRadius.circular(30),
       child: MaterialButton(
         onPressed: () {
-          signup(emailidEditingController.text, passwordEditingController.text);
+          //signup(emailidEditingController.text, passwordEditingController.text);
+          if (_formKey.currentState!.validate()) {
+            context.read<AuthenticationProvider>().signUpUser(
+                emailidEditingController.text,
+                passwordEditingController.text,
+                nameEditingController.text,
+                enrollmentEditingController.text,
+                branchEditingController.text,
+                batchEditingController.text);
+
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const homepage()));
+          }
         },
-        child: Text('Sign Up'),
+        child: const Text('Sign Up'),
       ),
     );
 
@@ -139,7 +152,7 @@ class _signupscreenState extends State<signupscreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
             color: Colors.blue,
           ),
@@ -163,6 +176,11 @@ class _signupscreenState extends State<signupscreen> {
                     DropdownButton<String>(
                       value: value,
                       items: const [
+                        DropdownMenuItem(
+                          value: 'Branch',
+                          child: Text("Branch"),
+                          enabled: false,
+                        ),
                         DropdownMenuItem(value: 'CSE', child: Text("CSE")),
                         DropdownMenuItem(value: 'ECE', child: Text("ECE")),
                       ],
@@ -172,11 +190,16 @@ class _signupscreenState extends State<signupscreen> {
                         });
                         branchEditingController.text = newValue!;
                       },
-                      hint: Text("Branch"),
+                      hint: const Text("Branch"),
                     ),
                     DropdownButton<String>(
                       value: value2,
                       items: const [
+                        DropdownMenuItem(
+                          value: 'Batch',
+                          child: Text("Batch"),
+                          enabled: false,
+                        ),
                         DropdownMenuItem(value: 'O1', child: Text("O1")),
                         DropdownMenuItem(value: 'O2', child: Text("O2")),
                         DropdownMenuItem(value: 'O3', child: Text("O3")),
@@ -192,7 +215,7 @@ class _signupscreenState extends State<signupscreen> {
                         });
                         batchEditingController.text = newValue2!;
                       },
-                      hint: Text("Batch"),
+                      hint: const Text("Batch"),
                     ),
                     emailidfield,
                     passwordfield,
@@ -209,25 +232,78 @@ class _signupscreenState extends State<signupscreen> {
   }
 
   //signup function
-  void signup(String email, String password) async {
+  /* void signup(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       await _auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) => {
-                postdetailstoFirestore(),
-              })
+          .createUserWithEmailAndPassword(
+              email: email.trim(), password: password)
           .catchError((e) {
         Fluttertoast.showToast(msg: e!.message);
       });
     }
+  }*/
+
+/*currentUser _currentuser =
+          Provider.of<currentUser>(context, listen: false);
+      if (await _currentuser.signUpUser(email, password)) {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: ((context) => homepage())));
+      }
+*/
+/*void signup(String email, String password, BuildContext context) async {
+    currentUser _currentuser = Provider.of<currentUser>(context, listen: false);
+
+    try {
+      if (_formKey.currentState!.validate()) {
+        debugPrint(email);
+        if (await _currentuser.signUpUser(email.trim(), password.trim())) {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: ((context) => homepage())));
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+  }*/
+
+  postDetailsToFirestore() async {
+    debugPrint("callllled");
+    // calling our firestore
+    // calling our user model
+    // sedning these values
+
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
+    User? user = _auth.currentUser;
+
+    usermodel userModel = usermodel();
+
+    userModel.email = user!.email;
+    userModel.uid = user.uid;
+    userModel.name = nameEditingController.text;
+    userModel.enrollment = enrollmentEditingController.text;
+    userModel.branch = branchEditingController.text;
+    userModel.batch = batchEditingController.text;
+
+    await firebaseFirestore
+        .collection("users")
+        .doc(user.uid)
+        .set(userModel.toMap());
+    Fluttertoast.showToast(msg: "Account created successfully :) ");
+
+    Navigator.pushAndRemoveUntil(
+        (context),
+        MaterialPageRoute(builder: (context) => const homepage()),
+        (route) => false);
   }
 
-  postdetailstoFirestore() async {
+  /*postdetailstoFirestore() async {
     //call firestore
     //call usermodel
     //sending values
 
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
     User? user = _auth.currentUser;
     usermodel userModel = usermodel();
     userModel.email = user!.email;
@@ -242,7 +318,7 @@ class _signupscreenState extends State<signupscreen> {
         .doc(user.uid)
         .set(userModel.toMap());
     Fluttertoast.showToast(msg: "Account created successfully");
-    Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (context) => homepage()), (route) => false);
-  }
+    /*Navigator.pushAndRemoveUntil(context,
+      MaterialPageRoute(builder: (context) => homepage()), (route) => false);*/
+  }*/
 }
