@@ -1,16 +1,16 @@
+import 'dart:io';
+import 'dart:math';
+
+import 'package:assignment/assignments_screens/Thirdpage.dart';
+import 'package:assignment/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:assignment/assignments_screens/FirstPage.dart';
 import 'package:assignment/assignments_screens/secondPage.dart';
 import 'package:assignment/assignments_screens/Modal.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
-Future main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp();
-
-  runApp(MyApp2());
-}
 
 class MyApp2 extends StatelessWidget {
   static final String title = 'MAN-001';
@@ -39,6 +39,26 @@ class _MainPageState extends State<MainPage> {
     futureFiles = FirebaseApi.listAll('files/');
   }
 
+  int a = 0;
+  String result3 = ' ';
+  Widget Display1() {
+    if (a == 1) {
+      return TextField(
+        //controller: _namecontroller,
+        decoration: new InputDecoration(
+          hintText: 'Type here',
+          //hintStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+        ),
+        onChanged: (String str) {
+          setState(() {
+            result3 = str;
+          });
+        },
+      );
+    } else
+      return Text('');
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -48,6 +68,7 @@ class _MainPageState extends State<MainPage> {
         body: FutureBuilder<List<FirebaseFile>>(
           future: futureFiles,
           builder: (context, snapshot) {
+            if (snapshot.hasData) {}
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
                 return Center(child: CircularProgressIndicator());
@@ -77,6 +98,19 @@ class _MainPageState extends State<MainPage> {
                 }
             }
           },
+        ),
+        //Display1(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => MyApp5()));
+            a = 1;
+          },
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          backgroundColor: Colors.blue,
         ),
       );
 
@@ -121,4 +155,33 @@ class _MainPageState extends State<MainPage> {
           ),
         ),
       );
+/*  getpdfandupload() async {
+    FilePickerResult? file =
+        await FilePicker.platform.pickFiles(type: FileType.custom
+        allowedExtensions: ['pdf']);
+    var number = Random().nextInt(20);
+    if(file == null) return;
+    File pick = File(file.files.single.path.toString());
+    var file2 = pick.readAsBytesSync();
+    String name = DateTime.now().millisecondsSinceEpoch.toString();
+    //uploading file
+    var pdffile = FirebaseStorage.instance.ref().child(name).child('/.pdf');
+    UploadTask task = pdffile.putData(file2);
+    TaskSnapshot snapshot  = await task;
+    var url2 = await snapshot.ref.getDownloadURL();
+    await FirebaseFirestore.instance.collection("file").doc().set({
+      'fileurl':url2,
+      'num':"Assignment"+number.toString(),
+    });
+  }
+}
+Future Upload() async{
+ final result =
+        await FilePicker.platform.pickFiles(type: FileType.custom
+        allowedExtensions: ['pdf']);
+    var number = Random().nextInt(20);
+    if(result == null) return;
+    final path = result.files.single.path;
+    setState(() => file = File(path));
+}*/
 }

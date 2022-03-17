@@ -6,11 +6,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 //import 'package:flutter/cupertino.dart';
 //import 'package:my_app_assignment/main.dart';
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(const MyApp3());
-}
 
 class MyApp3 extends StatelessWidget {
   const MyApp3({Key? key}) : super(key: key);
