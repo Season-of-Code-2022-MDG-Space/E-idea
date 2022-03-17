@@ -1,12 +1,12 @@
-import 'dart:math';
-
-import 'package:assignment/main.dart';
 import 'package:assignment/screens/homepage.dart';
 import 'package:assignment/screens/signupscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
+import 'package:assignment/states/CurrentUser.dart';
 
+// ignore: camel_case_types
 class loginscreen extends StatefulWidget {
   const loginscreen({Key? key}) : super(key: key);
 
@@ -14,11 +14,13 @@ class loginscreen extends StatefulWidget {
   _loginscreenState createState() => _loginscreenState();
 }
 
+// ignore: camel_case_types
 class _loginscreenState extends State<loginscreen> {
+  String id = "login";
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController emailController = new TextEditingController();
-  final TextEditingController passwordController = new TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   //firebase
   final _auth = FirebaseAuth.instance;
@@ -41,12 +43,12 @@ class _loginscreenState extends State<loginscreen> {
           return null;
         },
         onSaved: (value) {
-          emailController.text = value!;
+          emailController.text = value!.trim();
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.mail),
-          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          prefixIcon: const Icon(Icons.mail),
+          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Email",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -57,13 +59,14 @@ class _loginscreenState extends State<loginscreen> {
         autofocus: false,
         controller: passwordController,
         validator: (value) {
-          RegExp regex = new RegExp(r'^.{6,}$');
+          RegExp regex = RegExp(r'^.{6,}$');
           if (value!.isEmpty) {
             return ("Password is required for login");
           }
           if (!regex.hasMatch(value)) {
             return ("Enter Valid Password(Min. 6 Character)");
           }
+          return null;
         },
         obscureText: true,
         onSaved: (value) {
@@ -71,8 +74,8 @@ class _loginscreenState extends State<loginscreen> {
         },
         textInputAction: TextInputAction.done,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.vpn_key),
-          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          prefixIcon: const Icon(Icons.vpn_key),
+          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Password",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -83,11 +86,20 @@ class _loginscreenState extends State<loginscreen> {
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
       child: MaterialButton(
-          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          onPressed: () {
-            signin(emailController.text, passwordController.text);
+          padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+          onPressed: () async {
+            //loginuser(emailController.text, passwordController.text, context);
+
+            if (_formKey.currentState!.validate()) {
+              context.read<AuthenticationProvider>().loginUser(
+                    email: emailController.text.trim(),
+                    password: passwordController.text.trim(),
+                  );
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const homepage()));
+            }
           },
-          child: Text(
+          child: const Text(
             "Login",
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -113,15 +125,16 @@ class _loginscreenState extends State<loginscreen> {
                     Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text("Don't have an account? "),
+                          const Text("Don't have an account? "),
                           GestureDetector(
                             onTap: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => signupscreen()));
+                                      builder: (context) =>
+                                          const signupscreen()));
                             },
-                            child: Text("SignUp"),
+                            child: const Text("SignUp"),
                           )
                         ])
                   ],
@@ -135,18 +148,33 @@ class _loginscreenState extends State<loginscreen> {
   }
 
   //login function
-  void signin(String email, String password) async {
+  void loginuser(String email, String password, BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       await _auth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((uid) => {
                 Fluttertoast.showToast(msg: "Login Succesful"),
                 Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => homepage()))
+                    MaterialPageRoute(builder: (context) => const homepage()))
               })
           .catchError((e) {
         Fluttertoast.showToast(msg: e!.message);
       });
     }
   }
+
+  /*void loginuser(String email, String password, BuildContext context) async {
+    currentUser _currentuser = Provider.of<currentUser>(context, listen: false);
+
+    try {
+      if (_formKey.currentState!.validate()) {
+        if (await _currentuser.loginUser(email, password)) {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: ((context) => homepage())));
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+  }*/
 }
