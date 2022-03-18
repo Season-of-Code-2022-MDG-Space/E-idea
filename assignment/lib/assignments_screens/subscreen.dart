@@ -3,7 +3,8 @@ import 'package:assignment/assignments_screens/Main2.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
+import 'package:assignment/assignments_screens/csn103-1.dart';
+import 'package:assignment/assignments_screens/csn101-1.dart';
 //import 'package:flutter/cupertino.dart';
 //import 'package:my_app_assignment/main.dart';
 
@@ -55,11 +56,21 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text('MAN-001'),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                var push = Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyApp9()),
+                );
+              },
               child: Text('CSN-101'),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                var push = Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyApp8()),
+                );
+              },
               child: Text('CSN-103'),
             ),
             // buildGridview(),
