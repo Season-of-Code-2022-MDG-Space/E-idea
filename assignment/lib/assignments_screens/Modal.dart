@@ -21,7 +21,7 @@ class ImagePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(file.name),
         centerTitle: true,
-        /* actions: [
+        /*actions: [
           IconButton(
             icon: Icon(Icons.file_download),
             onPressed: () async {
@@ -42,7 +42,7 @@ class ImagePage extends StatelessWidget {
               // height: double.infinity,
               // fit: BoxFit.cover,
             )
-          : Center(
+          : const Center(
               child: Text(
                 'Cannot be displayed',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
