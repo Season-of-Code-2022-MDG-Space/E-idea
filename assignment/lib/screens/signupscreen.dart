@@ -32,6 +32,7 @@ class _signupscreenState extends State<signupscreen> {
   final passwordEditingController = TextEditingController();
   final cpasswordEditingController = TextEditingController();
 
+  @override
   Widget build(BuildContext context) {
     final namefield = TextFormField(
       autofocus: false,
@@ -265,37 +266,6 @@ class _signupscreenState extends State<signupscreen> {
       print(e);
     }
   }*/
-
-  postDetailsToFirestore() async {
-    debugPrint("callllled");
-    // calling our firestore
-    // calling our user model
-    // sedning these values
-
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    final _auth = FirebaseAuth.instance;
-    User? user = _auth.currentUser;
-
-    usermodel userModel = usermodel();
-
-    userModel.email = user!.email;
-    userModel.uid = user.uid;
-    userModel.name = nameEditingController.text;
-    userModel.enrollment = enrollmentEditingController.text;
-    userModel.branch = branchEditingController.text;
-    userModel.batch = batchEditingController.text;
-
-    await firebaseFirestore
-        .collection("users")
-        .doc(user.uid)
-        .set(userModel.toMap());
-    Fluttertoast.showToast(msg: "Account created successfully :) ");
-
-    Navigator.pushAndRemoveUntil(
-        (context),
-        MaterialPageRoute(builder: (context) => const homepage()),
-        (route) => false);
-  }
 
   /*postdetailstoFirestore() async {
     //call firestore
