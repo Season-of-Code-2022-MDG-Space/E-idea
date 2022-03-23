@@ -1,10 +1,6 @@
-import 'package:assignment/model/usermodel.dart';
 import 'package:assignment/screens/homepage.dart';
 import 'package:assignment/states/CurrentUser.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 // ignore: camel_case_types
@@ -99,6 +95,7 @@ class _signupscreenState extends State<signupscreen> {
         if (!regex.hasMatch(value)) {
           return ("Enter Valid Password(Min. 6 Character)");
         }
+        return null;
       },
       onSaved: (value) {
         passwordEditingController.text = value!;
@@ -125,9 +122,11 @@ class _signupscreenState extends State<signupscreen> {
     );
 
     final signupbutton = Material(
+      color: const Color.fromARGB(255, 17, 47, 82),
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
       child: MaterialButton(
+        minWidth: 200,
         onPressed: () {
           //signup(emailidEditingController.text, passwordEditingController.text);
           if (_formKey.currentState!.validate()) {
@@ -143,35 +142,68 @@ class _signupscreenState extends State<signupscreen> {
                 MaterialPageRoute(builder: (context) => const homepage()));
           }
         },
-        child: const Text('Sign Up'),
+        child: const Text(
+          "Sign Up",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 20, color: Colors.white, fontWeight: FontWeight.normal),
+        ),
       ),
     );
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.blue,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/Sign.jpg'),
+          fit: BoxFit.cover,
         ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Color.fromARGB(255, 9, 49, 82),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        body: SingleChildScrollView(
           child: Container(
-            color: Colors.white,
+            color: Colors.transparent,
             child: Padding(
-              padding: const EdgeInsets.all(32.0),
+              padding: const EdgeInsets.all(55.0),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: <Widget>[
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Text(
+                      'Hello!                        ',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Text(
+                      'Nice to meet you...',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     namefield,
                     enrollmentfield,
                     DropdownButton<String>(
@@ -221,6 +253,9 @@ class _signupscreenState extends State<signupscreen> {
                     emailidfield,
                     passwordfield,
                     cpasswordfield,
+                    const SizedBox(
+                      height: 50,
+                    ),
                     signupbutton,
                   ],
                 ),
@@ -231,64 +266,4 @@ class _signupscreenState extends State<signupscreen> {
       ),
     );
   }
-
-  //signup function
-  /* void signup(String email, String password) async {
-    if (_formKey.currentState!.validate()) {
-      await _auth
-          .createUserWithEmailAndPassword(
-              email: email.trim(), password: password)
-          .catchError((e) {
-        Fluttertoast.showToast(msg: e!.message);
-      });
-    }
-  }*/
-
-/*currentUser _currentuser =
-          Provider.of<currentUser>(context, listen: false);
-      if (await _currentuser.signUpUser(email, password)) {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: ((context) => homepage())));
-      }
-*/
-/*void signup(String email, String password, BuildContext context) async {
-    currentUser _currentuser = Provider.of<currentUser>(context, listen: false);
-
-    try {
-      if (_formKey.currentState!.validate()) {
-        debugPrint(email);
-        if (await _currentuser.signUpUser(email.trim(), password.trim())) {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: ((context) => homepage())));
-        }
-      }
-    } catch (e) {
-      print(e);
-    }
-  }*/
-
-  /*postdetailstoFirestore() async {
-    //call firestore
-    //call usermodel
-    //sending values
-
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    final _auth = FirebaseAuth.instance;
-    User? user = _auth.currentUser;
-    usermodel userModel = usermodel();
-    userModel.email = user!.email;
-    userModel.uid = user.uid;
-    userModel.name = nameEditingController.text;
-    userModel.enrollment = enrollmentEditingController.text;
-    userModel.branch = branchEditingController.text;
-    userModel.batch = batchEditingController.text;
-
-    await firebaseFirestore
-        .collection("users")
-        .doc(user.uid)
-        .set(userModel.toMap());
-    Fluttertoast.showToast(msg: "Account created successfully");
-    /*Navigator.pushAndRemoveUntil(context,
-      MaterialPageRoute(builder: (context) => homepage()), (route) => false);*/
-  }*/
 }

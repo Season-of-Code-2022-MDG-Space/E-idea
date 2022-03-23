@@ -1,3 +1,4 @@
+// ignore: camel_case_types
 class usermodel {
   String? uid;
   String? email;
@@ -16,6 +17,7 @@ class usermodel {
   });
 
   //receive data from server
+  // ignore: avoid_types_as_parameter_names, non_constant_identifier_names
   factory usermodel.fromMap(Map) {
     return usermodel(
         uid: Map['uid'],

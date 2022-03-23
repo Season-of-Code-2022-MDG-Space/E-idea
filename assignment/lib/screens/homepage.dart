@@ -42,44 +42,87 @@ class _homepageState extends State<homepage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                "HI",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-              Text("$name",
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold)),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MyApp3()),
-                    );
-                  },
-                  child: const Text("Assignments")),
-              ActionChip(
-                  label: const Text("Logout"),
-                  onPressed: () {
-                    logout(context);
-                  })
-            ],
+    return Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/Home.jpg'),
+            fit: BoxFit.cover,
           ),
         ),
-      ),
-    ));
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(
+                    height: 300,
+                  ),
+                  const Text(
+                    "Welcome back...",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 52, 82, 109),
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  // ignore: unnecessary_string_interpolations
+                  Text("$name",
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 52, 82, 109),
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal)),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Material(
+                    color: const Color.fromARGB(255, 174, 211, 228),
+                    elevation: 5,
+                    borderRadius: BorderRadius.circular(25),
+                    child: MaterialButton(
+                      padding: const EdgeInsets.fromLTRB(40, 100, 40, 100),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MyApp3()),
+                        );
+                      },
+                      child: const Text(
+                        "Assignments",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 25,
+                            color: Color.fromARGB(255, 23, 83, 133),
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ActionChip(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    label: const Text(
+                      "Logout",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Color.fromARGB(255, 32, 32, 32),
+                          fontWeight: FontWeight.normal),
+                    ),
+                    onPressed: () {
+                      logout(context);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 
   Future<void> logout(BuildContext context) async {

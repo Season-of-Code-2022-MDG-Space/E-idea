@@ -1,31 +1,26 @@
-import 'dart:io';
-import 'dart:math';
-
-import 'package:assignment/assignments_screens/Thirdpage.dart';
 import 'package:assignment/assignments_screens/crpwdscreen.dart';
-import 'package:assignment/main.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:assignment/assignments_screens/FirstPage.dart';
 import 'package:assignment/assignments_screens/secondPage.dart';
-import 'package:assignment/assignments_screens/Modal.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:assignment/assignments_screens/showingpdf.dart';
 import 'package:flutter/material.dart';
 
 class MyApp2 extends StatelessWidget {
-  static final String title = 'MAN-001';
+  static const String title = 'MAN-001';
+
+  const MyApp2({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,
         title: title,
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: MainPage(),
+        home: const MainPage(),
       );
 }
 
 class MainPage extends StatefulWidget {
+  const MainPage({Key? key}) : super(key: key);
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -42,11 +37,12 @@ class _MainPageState extends State<MainPage> {
 
   int a = 0;
   String result3 = ' ';
+  // ignore: non_constant_identifier_names
   Widget Display1() {
     if (a == 1) {
       return TextField(
         //controller: _namecontroller,
-        decoration: new InputDecoration(
+        decoration: const InputDecoration(
           hintText: 'Type here',
           //hintStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
         ),
@@ -56,62 +52,84 @@ class _MainPageState extends State<MainPage> {
           });
         },
       );
-    } else
+    } else {
       return const Text('');
+    }
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text(MyApp2.title),
-          centerTitle: true,
-        ),
-        body: FutureBuilder<List<FirebaseFile>>(
-          future: futureFiles,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {}
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-                return const Center(child: const CircularProgressIndicator());
-              default:
-                if (snapshot.hasError) {
-                  return const Center(child: Text('Some error occurred!'));
-                } else {
-                  final files = snapshot.data!;
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildHeader(files.length),
-                      const SizedBox(height: 12),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: files.length,
-                          itemBuilder: (context, index) {
-                            final file = files[index];
-
-                            return buildFile(context, file);
-                          },
-                        ),
-                      ),
-                    ],
-                  );
-                }
-            }
-          },
-        ),
-        //Display1(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const crpwdscreen()));
-            a = 1;
-          },
-          child: const Icon(
-            Icons.add,
-            color: Colors.white,
+  Widget build(BuildContext context) => Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/common.jpg'),
+            fit: BoxFit.cover,
           ),
-          backgroundColor: Colors.blue,
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: FutureBuilder<List<FirebaseFile>>(
+            future: futureFiles,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {}
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                  return const Center(child: CircularProgressIndicator());
+                default:
+                  if (snapshot.hasError) {
+                    return const Center(child: Text('Some error occurred!'));
+                  } else {
+                    final files = snapshot.data!;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 120,
+                        ),
+                        const Text(
+                          "        " + MyApp2.title,
+                          style: TextStyle(
+                              fontSize: 32,
+                              color: Color.fromARGB(255, 10, 53, 82),
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        buildHeader(files.length),
+                        const SizedBox(
+                          height: 8,
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: files.length,
+                            itemBuilder: (context, index) {
+                              final file = files[index];
+
+                              return buildFile(context, file);
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+              }
+            },
+          ),
+          //Display1(),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const crpwdscreen()));
+              a = 1;
+            },
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            backgroundColor: const Color.fromARGB(255, 10, 42, 68),
+          ),
         ),
       );
 
@@ -124,13 +142,13 @@ class _MainPageState extends State<MainPage> {
             fit: BoxFit.cover,
           ),
         ),*/
+        contentPadding: const EdgeInsets.fromLTRB(50, 10, 30, 10),
         title: Text(
           file.name,
           style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            decoration: TextDecoration.underline,
-            color: Colors.blue,
-          ),
+              fontSize: 18,
+              fontWeight: FontWeight.normal,
+              color: Color.fromARGB(255, 88, 126, 158)),
         ),
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => ImagePage(file: file),
@@ -138,21 +156,24 @@ class _MainPageState extends State<MainPage> {
       );
 
   Widget buildHeader(int length) => ListTile(
-        tileColor: Colors.blue,
-        leading: Container(
-          width: 52,
-          height: 52,
-          child: const Icon(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 50,
+        ),
+        tileColor: Colors.transparent,
+        leading: const SizedBox(
+          width: 60,
+          height: 30,
+          child: Icon(
             Icons.file_copy,
-            color: Colors.white,
+            color: Color.fromARGB(255, 36, 74, 117),
           ),
         ),
         title: Text(
-          '$length Files',
+          '$length Assignment(s)               ',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.white,
+            fontSize: 24,
+            color: Color.fromARGB(255, 36, 74, 117),
           ),
         ),
       );

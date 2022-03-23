@@ -83,10 +83,12 @@ class _loginscreenState extends State<loginscreen> {
         ));
 
     final loginbutton = Material(
+      color: const Color.fromARGB(255, 11, 38, 85),
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
       child: MaterialButton(
-          padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+          padding: const EdgeInsets.fromLTRB(32, 12, 32, 12),
+          minWidth: 250,
           onPressed: () async {
             //loginuser(emailController.text, passwordController.text, context);
 
@@ -103,29 +105,55 @@ class _loginscreenState extends State<loginscreen> {
             "Login",
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.normal),
           )),
     );
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: SingleChildScrollView(
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/Login.jpg'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SingleChildScrollView(
           child: Container(
-            color: Colors.white,
+            color: Colors.transparent,
             child: Padding(
-              padding: const EdgeInsets.all(32.0),
+              padding: const EdgeInsets.all(40.0),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: <Widget>[
+                    const SizedBox(
+                      height: 400,
+                    ),
                     emailfield,
+                    const SizedBox(
+                      height: 20,
+                    ),
                     passwordfield,
+                    const SizedBox(
+                      height: 35,
+                    ),
                     loginbutton,
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          const Text("Don't have an account? "),
+                          const Text(
+                            "Don't have an account? ",
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Color.fromARGB(255, 10, 53, 82),
+                                fontWeight: FontWeight.normal),
+                          ),
                           GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -134,7 +162,13 @@ class _loginscreenState extends State<loginscreen> {
                                       builder: (context) =>
                                           const signupscreen()));
                             },
-                            child: const Text("SignUp"),
+                            child: const Text(
+                              "SignUp",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Color.fromARGB(255, 10, 53, 82),
+                                  fontWeight: FontWeight.normal),
+                            ),
                           )
                         ])
                   ],
